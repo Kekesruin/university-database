@@ -99,8 +99,11 @@ docker compose up
 -   Streamlit  http://localhost:8501 - Веб-интерфейс
     
 -   REST API   http://localhost:8000/docs - Swagger-документация
+     
      GET	/students/{id}/grades  -  Оценки студента
+     
      GET	/students/{id}/debts  -  Долги студента
+     
      GET	/groups/{group_code}/students  -  Список группы
     
 -   PostgreSQL	localhost:5433	Прямой доступ к БД
