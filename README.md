@@ -30,6 +30,7 @@
 - Автоматическое создание БД и заполнение тестовыми данными
 - Работает на любой ОС без установки PostgreSQL и Python
 - Доступ к веб-интерфейсу с любого устройства в локальной сети
+- Веб-интерфейс и REST API доступны одновременно
 
 ---
 
@@ -86,11 +87,22 @@ psql -U postgres -f fill_data.sql
 pip install -r requirements.txt
 streamlit run app.py
 ```
-## Быстрый запуск (Docker) В браузере: http://localhost:8501
+### Быстрый запуск (Docker) 
 
 ```bash
 docker compose up
 ```
+---
+
+Доступно:
+    Streamlit	http://localhost:8501	Веб-интерфейс
+    REST API	http://localhost:8000/docs	Swagger-документация
+        GET	/students/{id}/grades	Оценки студента
+        GET	/students/{id}/debts	Долги студента
+        GET	/groups/{group_code}/students	Список группы
+    
+    PostgreSQL	localhost:5433	Прямой доступ к БД
+
 ---
 
 ## Стек
@@ -98,6 +110,6 @@ docker compose up
 - PL/pgSQL
 - Python (Streamlit, psycopg2, pandas)
 - Docker / Docker Compose
-
+- FastAPI + Uvicorn (REST API)
 ## Автор
 [Kekesruin](https://github.com/Kekesruin)
