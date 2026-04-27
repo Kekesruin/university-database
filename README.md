@@ -82,8 +82,8 @@ M:N	students ↔ discipline_control
 
 ## Запуск
 ```bash
-psql -U postgres -f schema.sql
-psql -U postgres -f fill_data.sql
+psql -U postgres -f sql/schema.sql
+psql -U postgres -f sql/fill_data.sql
 pip install -r requirements.txt
 streamlit run app.py
 ```
