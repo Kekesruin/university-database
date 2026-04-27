@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mf_mgtu
+    volumes:
+      - ./schema.sql:/docker-entrypoint-initdb.d/1_schema.sql
+      - ./fill_data.sql:/docker-entrypoint-initdb.d/2_fill.sql
+    ports:
+      - "5433:5432"
+
+  app:
+    build: .
+    ports:
+      - "8501:8501"
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: mf_mgtu
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+    depends_on:
+      - db

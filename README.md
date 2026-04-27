@@ -25,6 +25,12 @@
 - Студент видит только свои оценки (через `user_student` + `CURRENT_USER`)
 - Преподаватель может менять оценки, но не удалять студентов
 
+### Развёртывание
+- Запуск в одну команду через Docker Compose
+- Автоматическое создание БД и заполнение тестовыми данными
+- Работает на любой ОС без установки PostgreSQL и Python
+- Доступ к веб-интерфейсу с любого устройства в локальной сети
+
 ---
 
 ## Роли и доступы
@@ -74,12 +80,18 @@ psql -U postgres -f fill_data.sql
 pip install -r requirements.txt
 streamlit run app.py
 ```
+##№ Быстрый запуск (Docker)
+
+```bash
+docker compose up
+В браузере: http://localhost:8501
 ---
 
 ## Стек
 - PostgreSQL 15+
 - PL/pgSQL
 - Python (Streamlit, psycopg2, pandas)
+- Docker / Docker Compose
 
 ## Автор
 [Kekesruin](https://github.com/Kekesruin)

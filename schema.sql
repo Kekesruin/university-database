@@ -95,6 +95,11 @@ CREATE TABLE grades (
     UNIQUE(student_id, discipline_control_id, semester)
 );
 
+CREATE TABLE user_student (
+    user_login VARCHAR(100) PRIMARY KEY,
+    student_id INT UNIQUE NOT NULL REFERENCES students(student_id)
+);
+
 CREATE FUNCTION get_current_semester(
     p_enrollment_year INT,
     p_date DATE DEFAULT CURRENT_DATE
@@ -119,3 +124,45 @@ BEGIN
     RETURN semester;
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE VIEW v_my_grades AS
+SELECT 
+    d.discipline_name AS "Предмет",
+    ct.control_name AS "Тип",
+    gr.semester AS "Семестр",
+    gr.grade_value AS "Оценка",
+    gr.grade_date AS "Дата"
+FROM grades gr
+JOIN students s ON gr.student_id = s.student_id
+JOIN discipline_control dc ON gr.discipline_control_id = dc.discipline_control_id
+JOIN disciplines d ON dc.discipline_id = d.discipline_id
+JOIN control_types ct ON dc.control_type_id = ct.control_type_id
+JOIN user_student us ON s.student_id = us.student_id
+WHERE us.user_login = CURRENT_USER;
+
+CREATE VIEW v_teacher_groups AS
+SELECT 
+    g.group_code AS "Группа",
+    s.student_id AS "ID",
+    s.full_name AS "ФИО",
+    s.record_book_num AS "Зачётка",
+    s.status AS "Статус"
+FROM students s
+JOIN groups g ON s.group_id = g.group_id;
+
+CREATE VIEW v_teacher_grades AS
+SELECT 
+    g.group_code AS "Группа",
+    s.full_name AS "ФИО",
+    d.discipline_name AS "Предмет",
+    ct.control_name AS "Тип",
+    gr.semester AS "Семестр",
+    gr.grade_value AS "Оценка",
+    gr.grade_date AS "Дата",
+    gr.grade_id
+FROM grades gr
+JOIN students s ON gr.student_id = s.student_id
+JOIN groups g ON s.group_id = g.group_id
+JOIN discipline_control dc ON gr.discipline_control_id = dc.discipline_control_id
+JOIN disciplines d ON dc.discipline_id = d.discipline_id
+JOIN control_types ct ON dc.control_type_id = ct.control_type_id;

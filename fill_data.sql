@@ -79,3 +79,17 @@ INSERT INTO user_student (user_login, student_id) VALUES
     ('ivanov', 1),
     ('petrov', 2),
     ('sidorov', 3);
+
+-- СОЗДАНИЕ РОЛЕЙ
+CREATE ROLE student_role;
+CREATE ROLE teacher_role;
+CREATE ROLE admin_role WITH LOGIN PASSWORD 'admin123' SUPERUSER;
+CREATE ROLE prepod_poyarkov WITH LOGIN PASSWORD 'prepod123' IN ROLE teacher_role;
+CREATE ROLE ivanov WITH LOGIN PASSWORD 'ivanov123' IN ROLE student_role;
+CREATE ROLE petrov WITH LOGIN PASSWORD 'petrov123' IN ROLE student_role;
+CREATE ROLE sidorov WITH LOGIN PASSWORD 'sidorov123' IN ROLE student_role;
+
+GRANT SELECT ON v_my_grades TO student_role;
+GRANT SELECT ON v_teacher_groups TO teacher_role;
+GRANT SELECT ON v_teacher_grades TO teacher_role;
+GRANT SELECT, UPDATE (grade_value, grade_date) ON grades TO teacher_role;

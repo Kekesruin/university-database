@@ -1,11 +1,22 @@
 import streamlit as st
 import psycopg2
 import pandas as pd
+import os
 
-DB = {'host': 'localhost', 'port': 5432, 'database': 'mf_mgtu'}
+HOST = os.environ.get('DB_HOST', 'localhost')
+PORT = int(os.environ.get('DB_PORT', 5432))
+DATABASE = os.environ.get('DB_NAME', 'mf_mgtu')
+PG_USER = os.environ.get('DB_USER', 'postgres')
+PG_PASS = os.environ.get('DB_PASSWORD', 'postgres')
 
-def conn(user, pwd):
-    return psycopg2.connect(**DB, user=user, password=pwd)
+def conn(user=None, pwd=None):
+    return psycopg2.connect(
+        host=HOST,
+        port=PORT,
+        database=DATABASE,
+        user=user or PG_USER,
+        password=pwd or PG_PASS
+    )
 
 def q(query, user, pwd, params=None):
     with conn(user, pwd) as c:
@@ -13,7 +24,8 @@ def q(query, user, pwd, params=None):
 
 def init():
     for k in ['logged_in', 'user', 'pwd', 'role']:
-        if k not in st.session_state: st.session_state[k] = None if k != 'logged_in' else False
+        if k not in st.session_state: 
+            st.session_state[k] = None if k != 'logged_in' else False
 
 # Вход в систему
 def login():
