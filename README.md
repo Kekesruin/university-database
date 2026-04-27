@@ -57,11 +57,17 @@
 ![ER-диаграмма](screenshots/erd.png)
 ### Схема связей:
 1:M	faculties → departments
+
 1:M	faculties → groups
+
 1:M	departments → disciplines
+
 1:M	groups → students
+
 M:N	disciplines ↔ control_types
+
 M:N	students ↔ discipline_control
+
 1:1	students ↔ user_student
 
 ---
@@ -80,11 +86,11 @@ psql -U postgres -f fill_data.sql
 pip install -r requirements.txt
 streamlit run app.py
 ```
-##№ Быстрый запуск (Docker)
+## Быстрый запуск (Docker) В браузере: http://localhost:8501
 
 ```bash
 docker compose up
-В браузере: http://localhost:8501
+```
 ---
 
 ## Стек
