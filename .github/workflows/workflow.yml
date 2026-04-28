@@ -1,0 +1,71 @@
+name: Full CI/CD Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-all:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Test Database Schema
+        run: |
+          PGPASSWORD=postgres psql -h localhost -U postgres -d test -f sql/schema.sql
+          echo "Schema created"
+
+      - name: Test Fill Data
+        run: |
+          PGPASSWORD=postgres psql -h localhost -U postgres -d test -f sql/fill_data.sql
+          echo "Data inserted"
+
+      - name: Test Graph Dependencies
+        run: |
+          PGPASSWORD=postgres psql -h localhost -U postgres -d test -f sql/graph.sql
+          echo "Graph works"
+
+      - name: Test Students Count
+        run: |
+          COUNT=$(PGPASSWORD=postgres psql -h localhost -U postgres -d test -t -c "SELECT COUNT(*) FROM students")
+          echo "Students: $COUNT"
+          [ "$COUNT" -gt 0 ] && echo "Has students"
+
+      - name: Install Python deps
+        run: pip install fastapi uvicorn streamlit psycopg2-binary
+
+      - name: Test API starts
+        run: |
+          nohup uvicorn api:app --host 0.0.0.0 --port 8000 > /dev/null 2>&1 &
+          sleep 3
+          curl -s http://localhost:8000/docs | head -1
+          echo "API started"
+
+      - name: Test Streamlit starts
+        run: |
+          timeout 10 streamlit run app.py --server.headless true 2>&1 | tail -3
+          echo "Streamlit started"
