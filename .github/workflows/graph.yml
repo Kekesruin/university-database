@@ -36,3 +36,11 @@ jobs:
       - name: Run graph query
         run: |
           PGPASSWORD=postgres psql -h localhost -U postgres -d test -f sql/graph.sql
+     
+      - name: Test fill data
+        run: |
+          PGPASSWORD=postgres psql -h localhost -U postgres -d test -f sql/fill_data,sql
+
+      - name: Test query
+        run: |
+          PGPASSWORD=postgres psql -h localhost -U postgres -d test -c "SELECT COUNT(*) FROM students;"
